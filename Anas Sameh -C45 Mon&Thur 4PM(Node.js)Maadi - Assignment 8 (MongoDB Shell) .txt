@@ -1,0 +1,276 @@
+1-
+
+task8>  db.createCollection("books" , {validator: {$and: [{title:{$exists : true }}]}})
+{ ok: 1 }
+
+
+2-
+
+task8> db.authors.insertOne({name:"anas sameh" , nationality : "egyption" , age : 20})
+{
+  acknowledged: true,
+  insertedId: ObjectId('69729495bb77060ab7628ca2')
+}
+
+
+3-
+
+task8> db.createCollection("logs" , {capped:true , size : 1 })
+{ ok: 1 }
+
+
+4- 
+
+task8> db.books.createIndex({title : 1})
+title_1
+task8> db.books.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { title: 1 }, name: 'title_1' }
+]
+task8>
+
+
+5- 
+task8> db.books.insertOne({title: "book1" , author : "anas" , year : 2005 , genres: ["comedy" , "fantasy"]})
+{
+  acknowledged: true,
+  insertedId: ObjectId('69729694bb77060ab7628ca3')
+}
+
+
+
+6- 
+task8>  db.books.insertMany([{title: "book1" , author : "anas" , year : 2005 , genres: ["comedy" , "fantasy"]},{title: "book1" , author : "anas" , year : 2005 , genres: ["comedy" , "fantasy"]},{title: "book1" , author : "anas" , year : 2005 , genres: ["comedy" , "fantasy"]}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('69729761bb77060ab7628ca4'),
+    '1': ObjectId('69729761bb77060ab7628ca5'),
+    '2': ObjectId('69729761bb77060ab7628ca6')
+  }
+}
+
+
+7-
+
+task8> db.logs.insertOne({book_id : "16752ce327a12" , action :"borrowed"})
+{
+  acknowledged: true,
+  insertedId: ObjectId('69729837bb77060ab7628ca7')
+}
+
+
+
+8- 
+
+task8> db.books.updateOne({title: "book1"} , {$set: {year:2022}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+9-
+
+task8> db.books.find({title : "book1"})
+{
+  _id: ObjectId('69729694bb77060ab7628ca3'),
+  title: 'book1',
+  author: 'anas',
+  year: 2022,
+  genres: [ 'comedy', 'fantasy' ]
+}
+
+
+10 - 
+
+task8> db.books.find({year: {$gte:1990 , $lte : 2020}})
+[
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+11-
+
+task8> db.books.find({genres: {$elemMatch: {$eq:"fantasy"}}})
+[
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+
+12-
+
+task8> db.books.find().sort({year: -1}).skip(2).limit(3)
+[
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca6'),
+    title: 'book0',
+    author: 'anas',
+    year: 1980,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+13-
+
+task8> db.books.find({year: {$type : 16 }})
+[
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca5'),
+    title: 'book3',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca6'),
+    title: 'book0',
+    author: 'anas',
+    year: 1980,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+
+14- 
+
+task8> db.books.find({genres: {$nin :["horror" , "Science Fiction"]}})
+[
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca5'),
+    title: 'book3',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca6'),
+    title: 'book0',
+    author: 'anas',
+    year: 1980,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+15-
+
+task8> db.books.deleteMany({year: {$lt:2000}})
+{ acknowledged: true, deletedCount: 1 }
+
+16-
+task8> db.books.aggregate([{$match:{year: {$gt:2000}}} , {$sort: {year : -1}}])
+[
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca5'),
+    title: 'book3',
+    author: 'anas',
+    year: 2022,
+    genres: [ 'comedy', 'fantasy' ]
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: [ 'comedy', 'fantasy' ]
+  }
+]
+
+17-
+task8> db.books.aggregate([{$match:{year: {$gt:2000}}} , {$project: {_id:0 , author: 1 , title: 1 , year: 1 }}])
+[
+  { title: 'book1', author: 'anas', year: 2022 },
+  { title: 'book2', author: 'anas', year: 2015 },
+  { title: 'book3', author: 'anas', year: 2022 }
+]
+
+18-
+task8> db.books.aggregate([{$unwind: "$genres"}])
+[
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: 'comedy'
+  },
+  {
+    _id: ObjectId('69729694bb77060ab7628ca3'),
+    title: 'book1',
+    author: 'anas',
+    year: 2022,
+    genres: 'fantasy'
+  },
+  {
+    _id: ObjectId('69729761bb77060ab7628ca4'),
+    title: 'book2',
+    author: 'anas',
+    year: 2015,
+    genres: 'comedy'
+  }
+]
+
